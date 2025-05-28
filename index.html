@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>souEco | Recicle certo e ganhe recompensas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* --- Global Utilities for Image Sizing --- */
+        .hero-image-container,
+        .solution-image-container,
+        .gamification-image-container {
+            overflow: hidden;
+            position: relative;
+            /* Altura padrão, ajustada abaixo para cada seção */
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eee;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .hero-image,
+        .solution-image,
+        .gamification-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Default for most images */
+            display: block;
+            border-radius: 8px;
+        }
+
+        .partner-logo, .ods-logo {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* --- Navbar Styles --- */
+        .navbar-brand .text-warning {
+            color: #ffc107 !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffc107;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+            font-weight: bold;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+            color: #212529;
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1532938911077-f2730f2c42d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+            color: #fff;
+            padding: 100px 0;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+        }
+
+        .ai-badge {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 193, 7, 0.9);
+            color: #212529;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- Sections Styling --- */
+        section {
+            padding: 80px 0;
+        }
+
+        section h2 {
+            font-size: 2.8rem;
+            margin-bottom: 25px;
+        }
+
+        .badge {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 20px;
+        }
+
+        /* --- Solution Section --- */
+        .solution-image-container {
+            border: 5px solid #007bff;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        /* --- Technology Section (Como funciona a mágica) --- */
+        .tech-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            padding-top: 50px !important; /* Ensure enough space for the number */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .tech-number {
+            position: absolute;
+            top: -1px; /* Adjusted to be completely visible */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .tech-card .tech-icon {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 3rem;
+            color: rgba(0, 123, 255, 0.1);
+            transition: color 0.3s ease;
+        }
+
+        .tech-card:hover .tech-icon {
+            color: rgba(0, 123, 255, 0.3);
+        }
+
+        /* --- Gamification Section (Reciclou? Ganhou!) --- */
+        .reward-card {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .reward-card:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .reward-icon {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            background-color: #ffc107;
+            color: #212529;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-right: 20px;
+        }
+
+        .reward-content h5 {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .reward-content p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Ajuste da altura da imagem da gamificação e como ela se encaixa */
+        .gamification-image-container {
+            border: 5px solid #ffc107;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            height: 350px; /* Altura reduzida para melhor enquadramento */
+            padding: 15px; /* Adiciona um padding interno ao contêiner para a imagem respirar */
+        }
+        /* A imagem dentro do contêiner da gamificação */
+        .gamification-image {
+            object-fit: contain; /* Garante que a imagem inteira seja visível sem cortes */
+        }
+
+
+        /* --- Impact Section --- */
+        .impact-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .impact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .impact-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .ods-card {
+            background-color: #212529;
+            color: #fff;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .ods-card img {
+            border-radius: 5px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* --- Partners Section --- */
+        .partner-logo {
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .partner-logo:hover {
+            opacity: 1;
+        }
+
+        /* --- CTA Section --- */
+        .form-control-lg, .form-select-lg {
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.25rem;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #212529 !important;
+            color: #fff;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #ffc107;
+        }
+
+        footer .fa-recycle {
+            color: #ffc107;
+        }
+
+        .bg-gray-800 {
+            background-color: #495057 !important;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-recycle me-2 text-warning"></i><span class="text-white">sou</span><span class="text-warning">Eco</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#solucao">Solução</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#tecnologia">Tecnologia</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#impacto">Impacto</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#gamificacao">Gamificação</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="dashboardGestoresLink">Dashboard Gestores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="dashboardCatadorLink">Painel do Catador</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-warning" href="#contato">Quero testar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold mb-4">Sistema Inteligente de Reciclagem</h1>
+                <p class="lead mb-4">Recicle certo e transforme seu lixo em benefícios em tempo real</p>
+                <div class="d-flex gap-3">
+                    <a href="#contato" class="btn btn-warning btn-lg">Quero implementar</a>
+                </div>
+                <div class="mt-4 d-flex align-items-center">
+                    <div class="me-3">
+                        <div class="d-flex">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <small class="text-white-50">5/5 em sustentabilidade</small>
+                    </div>
+                    <div class="border-start ps-3">
+                        <div class="fw-bold">TOP 3</div>
+                        <small class="text-white-50">Hackathon CBESA 2025</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-image-container">
+                    <img src="src/assets/img/lixeira%20com%20qr%20code.jpg" alt="Lixeira com QR Code para reciclagem" class="hero-image img-fluid">
+                    <div class="ai-badge">
+                        <i class="fas fa-bolt me-1"></i> IA EM TEMPO REAL
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto text-center">
+                <span class="badge bg-dark mb-3">PROBLEMA CRÍTICO</span>
+                <h2 class="display-5 fw-bold mb-4">95% do lixo reciclável vai para aterros mesmo com coleta seletiva</h2>
+                <p class="lead">A separação incorreta nas residências é o maior gargalo da cadeia de reciclagem, contaminando materiais e inviabilizando a reutilização.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="solucao" class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2">
+                <span class="badge bg-primary mb-3">SOLUÇÃO INOVADORA</span>
+                <h2 class="display-5 fw-bold mb-4">Validação instantânea com IA + Recompensas reais</h2>
+                <p class="lead mb-4">Nosso sistema combina visão computacional com gamificação para transformar comportamentos.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> <strong>Análise automática</strong> da separação de resíduos</li>
+                    <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> <strong>Feedback imediato</strong> com instruções claras</li>
+                    <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> <strong>Pontuação</strong> convertível em benefícios</li>
+                    <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> <strong>Dados em tempo real</strong> para gestores públicos</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="solution-image-container">
+                    <img src="src/assets/img/ialixo.jpg" alt="Sistema de reciclagem inteligente" class="solution-image img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tecnologia" class="py-5 bg-white">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge bg-dark mb-3">TECNOLOGIA</span>
+                <h2 class="display-5 fw-bold mb-4">A Mágica da Reciclagem Inteligente</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="tech-card p-4 h-100">
+                    <div class="tech-number bg-primary text-white">1</div>
+                    <h4 class="mt-3">QR Code na Lixeira</h4>
+                    <p class="text-muted">Inicie a validação da reciclagem escaneando o QR Code na lixeira inteligente souEco através do nosso aplicativo.</p>
+                    <div class="tech-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tech-card p-4 h-100">
+                    <div class="tech-number bg-primary text-white">2</div>
+                    <h4 class="mt-3">Análise por IA</h4>
+                    <p class="text-muted">Nossa **visão computacional verifica instantaneamente** a separação correta dos materiais, garantindo a qualidade do reciclável.</p>
+                    <div class="tech-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tech-card p-4 h-100">
+                    <div class="tech-number bg-primary text-white">3</div>
+                    <h4 class="mt-3">Bonificação Imediata</h4>
+                    <p class="text-muted">Se a reciclagem estiver correta, você ganha **pontos convertíveis em descontos, recargas e outros benefícios**.</p>
+                    <div class="tech-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="gamificacao" class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <span class="badge bg-warning text-dark mb-3">GAMIFICAÇÃO</span>
+                <h2 class="display-5 fw-bold mb-4">Reciclou? Ganhou!</h2>
+                <p class="lead mb-4">Nosso sistema de recompensas aumenta em 10x o engajamento na coleta seletiva.</p>
+
+                <div class="reward-card mb-3">
+                    <div class="reward-icon bg-warning text-dark">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="reward-content">
+                        <h5 class="mb-1">Descontos em mercados</h5>
+                        <p class="small mb-0">Até 15% de desconto em redes parceiras</p>
+                    </div>
+                </div>
+
+                <div class="reward-card mb-3">
+                    <div class="reward-icon bg-warning text-dark">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="reward-content">
+                        <h5 class="mb-1">Recarga de celular</h5>
+                        <p class="small mb-0">R$0,50 por kg de material reciclado</p>
+                    </div>
+                </div>
+
+                <div class="reward-card">
+                    <div class="reward-icon bg-warning text-dark">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="reward-content">
+                        <h5 class="mb-1">Ranking comunitário</h5>
+                        <p class="small mb-0">Competição saudável entre bairros</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="gamification-image-container">
+                    <img src="src/assets/img/bonus" alt="Recompensas de reciclagem" class="gamification-image img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="impacto" class="py-5 bg-white">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge bg-dark mb-3">IMPACTO REAL</span>
+                <h2 class="display-5 fw-bold mb-4">Resultados que transformam</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="impact-card text-center p-4">
+                    <div class="impact-number text-primary">95%</div>
+                    <h4>Menos contaminação</h4>
+                    <p class="text-muted">Materiais chegam mais limpos às cooperativas</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-card text-center p-4">
+                    <div class="impact-number text-primary">10x</div>
+                    <h4>Mais engajamento</h4>
+                    <p class="text-muted">Aumento na participação da coleta seletiva</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-card text-center p-4">
+                    <div class="impact-number text-primary">R$ 0</div>
+                    <h4>Custo para o cidadão</h4>
+                    <p class="text-muted">O investimento é pago por empresas e municípios</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-12 text-center mb-4">
+                <span class="badge bg-success mb-3">NOSSOS ODS</span>
+                <h3 class="display-6 fw-bold mb-4">Comprometidos com a Agenda 2030</h3>
+            </div>
+            <div class="col-lg-6 mx-auto">
+                <div class="ods-card d-flex align-items-center p-4 mb-4 mb-lg-0"> <img src="src/assets/img/11.png" alt="ODS 11 Cidades e Comunidades Sustentáveis" class="ods-logo me-4" style="width: 100px;">
+                    <div>
+                        <h4 class="mb-2 text-warning">ODS 11: Cidades e Comunidades Sustentáveis</h4>
+                        <p class="mb-0 small text-white-50">Tornar as cidades e os assentamentos humanos inclusivos, seguros, resilientes e sustentáveis.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mx-auto">
+                <div class="ods-card d-flex align-items-center p-4">
+                    <img src="src/assets/img/12.png" alt="ODS 12 Consumo e Produção Responsáveis" class="ods-logo me-4" style="width: 100px;">
+                    <div>
+                        <h4 class="mb-2 text-warning">ODS 12: Consumo e Produção Responsáveis</h4>
+                        <p class="mb-0 small text-white-50">Garantir padrões de consumo e produção sustentáveis.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mx-auto mt-4">
+                <div class="ods-card d-flex align-items-center p-4">
+                    <img src="src/assets/img/6.png" alt="ODS 6 Água Potável e Saneamento" class="ods-logo me-4" style="width: 100px;">
+                    <div>
+                        <h4 class="mb-2 text-warning">ODS 6: Água Potável e Saneamento</h4>
+                        <p class="mb-0 small text-white-50">Garantir disponibilidade e manejo sustentável da água e saneamento para todos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="parceiros" class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <span class="badge bg-info mb-3">PARCEIROS</span>
+                <h2 class="display-5 fw-bold mb-4">Quem já confia na souEco</h2>
+                <p class="lead">Trabalhamos com líderes de mercado e municípios que buscam um futuro mais verde.</p>
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-around g-4">
+            <div class="col-6 col-md-3 col-lg-2">
+                <img src="src/assets/img/images.png" alt="Logo Empresa A" class="partner-logo">
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <img src="src/assets/img/cooperativa.jpeg" alt="Logo Empresa B" class="partner-logo">
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <img src="src/assets/img/varejo.jpeg" alt="Logo Empresa C" class="partner-logo">
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <img src="src/assets/img/ong.jpeg" alt="Logo Empresa D" class="partner-logo">
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <img src="src/assets/img/caesb.png" alt="Logo Empresa E" class="partner-logo">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contato" class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge bg-warning text-dark mb-3">CONTATO</span>
+                <h2 class="display-5 fw-bold mb-4">Pronto para transformar a reciclagem?</h2>
+                <p class="lead mb-5">Preencha o formulário e nossa equipe entrará em contato para um demonstração exclusiva.</p>
+                <form class="row g-4">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control form-control-lg" placeholder="Seu Nome Completo" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="email" class="form-control form-control-lg" placeholder="Seu Melhor E-mail" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control form-control-lg" placeholder="Nome da Empresa/Município" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="tel" class="form-control form-control-lg" placeholder="Telefone com DDD" required>
+                    </div>
+                    <div class="col-12">
+                        <select class="form-select form-select-lg" required>
+                            <option selected disabled>Selecione seu interesse</option>
+                            <option value="implementar">Implementar souEco na minha cidade</option>
+                            <option value="parceria">Ser um parceiro de recompensas</option>
+                            <option value="cooperativa">Minha cooperativa quer participar</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <textarea class="form-control form-control-lg" rows="4" placeholder="Sua Mensagem (opcional)"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-warning btn-lg w-100">Enviar Mensagem</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2024 souEco. Todos os direitos reservados. <i class="fas fa-recycle ms-2"></i></p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dashboardGestoresLink = document.getElementById('dashboardGestoresLink');
+        if (dashboardGestoresLink) {
+            dashboardGestoresLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'dashboard-gestores.html'; // Redireciona para o dashboard dos gestores
+            });
+        }
+
+        const dashboardCatadorLink = document.getElementById('dashboardCatadorLink');
+        if (dashboardCatadorLink) {
+            dashboardCatadorLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'dashboard-catador.html'; // Redireciona para o painel do catador
+            });
+        }
+    });
+</script>
+</body>
+</html>

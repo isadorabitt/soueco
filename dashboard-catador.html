@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>souEco | Painel do Catador</title>
+    <!-- Mesmas dependências -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="src/style.css"> <!-- Mesmo CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body id="dashboard-page" class="sidebar-collapsed">
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar (adaptado para catadores) -->
+    <div class="bg-sidebar border-right" id="sidebar-wrapper">
+        <div class="sidebar-heading text-center py-4">
+            <img src="src/assets/icons/soueco.jpg" alt="logo souEco" class="img-fluid logo-dashboard">
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3 current-page" data-section="overview"><i class="fas fa-chart-line"></i> <span>Meu Desempenho</span></a>
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="materials"><i class="fas fa-recycle"></i> <span>Materiais Coletados</span></a>
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="rewards"><i class="fas fa-gift"></i> <span>Recompensas</span></a>
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="collection"><i class="fas fa-calendar-alt"></i> <span>Agendamentos</span></a>
+            <a href="index.html" class="list-group-item list-group-item-action bg-sidebar text-white p-3 mt-auto"><i class="fas fa-home"></i> <span>Voltar ao Site</span></a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-primary ms-2" id="menu-toggle"><i class="fas fa-bars"></i></button>
+            <div class="ms-auto me-3">
+                <span class="navbar-text">Olá, [Nome do Catador]!</span>
+            </div>
+        </nav>
+
+        <div class="container-fluid py-4">
+            <!-- Seção de Visão Geral (adaptada) -->
+            <div id="overview-section" class="dashboard-section active">
+                <h2 class="mb-4">Meu Desempenho</h2>
+                <div class="row g-4 mb-4">
+                    <!-- Cards de Resumo (adaptados) -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card shadow-sm h-100 bg-ecopoints">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle text-white me-3"><i class="fas fa-coins"></i></div>
+                                    <div>
+                                        <h5 class="card-title text-muted mb-0">Meus Ecopontos</h5>
+                                        <p class="card-text fs-3 fw-bold" id="myEcopoints">1.250</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card shadow-sm h-100 bg-material">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle text-white me-3"><i class="fas fa-weight-hanging"></i></div>
+                                    <div>
+                                        <h5 class="card-title text-muted mb-0">Kg Reciclados</h5>
+                                        <p class="card-text fs-3 fw-bold" id="myRecycledWeight">125</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Adicione mais cards conforme necessário -->
+                </div>
+
+                <!-- Gráficos (pode reutilizar os mesmos com dados do catador) -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm h-100 p-3">
+                            <h5 class="card-title">Meus Materiais (Kg)</h5>
+                            <canvas id="myMaterialsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm h-100 p-3">
+                            <h5 class="card-title">Minha Evolução Mensal</h5>
+                            <canvas id="myMonthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Materiais Coletados -->
+            <div id="materials-section" class="dashboard-section">
+                <h2 class="mb-4">Materiais Coletados</h2>
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addMaterialModal">
+                    <i class="fas fa-plus-circle me-2"></i>Registrar Coleta
+                </button>
+                <div class="card shadow-sm p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Material</th>
+                                <th>Quantidade (Kg)</th>
+                                <th>Ecopontos</th>
+                                <th>Local</th>
+                                <th>Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>26/05/2024</td>
+                                <td>Plástico PET</td>
+                                <td>15</td>
+                                <td>75</td>
+                                <td>Ecoponto Centro</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <!-- Mais linhas de exemplo -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Recompensas -->
+            <div id="rewards-section" class="dashboard-section">
+                <h2 class="mb-4">Recompensas Disponíveis</h2>
+                <div class="row">
+                    <!-- Cards de recompensas -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <img src="src/assets/img/mercado.jpeg" class="card-img-top" alt="Desconto Mercado">
+                            <div class="card-body">
+                                <h5 class="card-title">Desconto Mercado X</h5>
+                                <p class="card-text">10% de desconto em compras acima de R$50</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-success">200 Ecopontos</span>
+                                    <button class="btn btn-sm btn-primary">Resgatar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mais cards de recompensas -->
+                </div>
+            </div>
+
+            <!-- Seção de Agendamentos -->
+            <div id="collection-section" class="dashboard-section">
+                <h2 class="mb-4">Meus Agendamentos</h2>
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#newScheduleModal">
+                    <i class="fas fa-plus-circle me-2"></i>Novo Agendamento
+                </button>
+                <div class="card shadow-sm p-3">
+                    <!-- Conteúdo de agendamentos -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modais (adicionar conforme necessidade) -->
+<div class="modal fade" id="addMaterialModal" tabindex="-1" aria-hidden="true">
+    <!-- Conteúdo do modal para adicionar materiais -->
+</div>
+
+<!-- Mesmos scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="src/script-catadores.js"></script> <!-- Novo JS específico -->
+</body>
+</html>

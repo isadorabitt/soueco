@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>souEco | Dashboard de Gestão</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="src/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body id="dashboard-page" class="sidebar-collapsed">
+<div class="d-flex" id="wrapper">
+    <div class="bg-sidebar border-right" id="sidebar-wrapper">
+        <div class="sidebar-heading text-center py-4">
+            <img src="src/assets/icons/soueco.jpg" alt="logo souEco" class="img-fluid logo-dashboard">
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3 current-page" data-section="overview"><i class="fas fa-chart-line"></i> <span>Visão Geral</span></a>
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="users"><i class="fas fa-users"></i> <span>Usuários</span></a>
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="materials"><i class="fas fa-recycle"></i> <span>Materiais Reciclados</span></a>
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="rewards"><i class="fas fa-gift"></i> <span>Recompensas</span></a>
+            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="settings"><i class="fas fa-cog"></i> <span>Configurações</span></a>
+            <a href="index.html" class="list-group-item list-group-item-action bg-sidebar text-white p-3 mt-auto"><i class="fas fa-home"></i> <span>Voltar ao Site</span></a>
+        </div>
+    </div>
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-primary ms-2" id="menu-toggle"><i class="fas fa-bars"></i></button>
+            <div class="ms-auto me-3">
+                <span class="navbar-text">Olá, Gestor!</span>
+            </div>
+        </nav>
+
+        <div class="container-fluid py-4">
+            <div id="overview-section" class="dashboard-section active">
+                <h2 class="mb-4">Visão Geral do Desempenho</h2>
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card shadow-sm h-100 bg-users">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle text-white me-3"><i class="fas fa-users"></i></div> <div>
+                                    <h5 class="card-title text-muted mb-0">Total de Usuários</h5>
+                                    <p class="card-text fs-3 fw-bold" id="totalUsers">2.540</p>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card shadow-sm h-100 bg-material">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle text-white me-3"><i class="fas fa-weight-hanging"></i></div> <div>
+                                    <h5 class="card-title text-muted mb-0">Material Reciclado (Kg)</h5>
+                                    <p class="card-text fs-3 fw-bold" id="totalRecycledWeight">12.345</p>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card shadow-sm h-100 bg-ecopoints">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle text-white me-3"><i class="fas fa-coins"></i></div> <div>
+                                    <h5 class="card-title text-muted mb-0">Ecopontos Gerados</h5>
+                                    <p class="card-text fs-3 fw-bold" id="totalEcopoints">123.450</p>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card shadow-sm h-100 bg-sessions">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle text-dark me-3"><i class="fas fa-lightbulb"></i></div> <div>
+                                    <h5 class="card-title text-muted mb-0">Sessões de Reciclagem</h5>
+                                    <p class="card-text fs-3 fw-bold" id="totalSessions">5.678</p>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm h-100 p-3">
+                            <h5 class="card-title">Pontos por Material (Ecopontos/Kg)</h5>
+                            <canvas id="pointsPerMaterialChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm h-100 p-3">
+                            <h5 class="card-title">Reciclagem por Material (Kg)</h5>
+                            <canvas id="materialRecyclingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm h-100 p-3">
+                            <h5 class="card-title">Reciclagem Diária (Últimos 7 dias)</h5>
+                            <canvas id="dailyRecyclingChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm h-100 p-3">
+                            <h5 class="card-title">Ranking dos Maiores Recicladores (Top 10)</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Usuário</th>
+                                        <th>Ecopontos</th>
+                                        <th>Kg Reciclados</th>
+                                        <th>Tipo Mais Reciclado</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="topRecyclersTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="users-section" class="dashboard-section">
+                <h2 class="mb-4">Gerenciamento de Usuários</h2>
+                <p>Detalhes e gestão dos usuários cadastrados no sistema.</p>
+                <div class="card shadow-sm p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Ecopontos</th>
+                                <th>Data de Cadastro</th>
+                                <th>Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Ana Silva</td>
+                                <td>ana.s@email.com</td>
+                                <td>1500</td>
+                                <td>2024-01-10</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Bruno Costa</td>
+                                <td>bruno.c@email.com</td>
+                                <td>1200</td>
+                                <td>2024-02-15</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="materials-section" class="dashboard-section">
+                <h2 class="mb-4">Materiais Reciclados</h2>
+                <p>Informações detalhadas sobre os tipos e quantidades de materiais reciclados.</p>
+                <div class="card shadow-sm p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Total Kg</th>
+                                <th>Ecopontos/Kg</th>
+                                <th>Total Ecopontos</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Garrafa de Vidro</td>
+                                <td>5000</td>
+                                <td>10</td>
+                                <td>50000</td>
+                            </tr>
+                            <tr>
+                                <td>Plástico PET</td>
+                                <td>4000</td>
+                                <td>5</td>
+                                <td>20000</td>
+                            </tr>
+                            <tr>
+                                <td>Papelão</td>
+                                <td>2000</td>
+                                <td>3</td>
+                                <td>6000</td>
+                            </tr>
+                            <tr>
+                                <td>Alumínio</td>
+                                <td>1000</td>
+                                <td>15</td>
+                                <td>15000</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rewards-section" class="dashboard-section">
+                <h2 class="mb-4">Gerenciamento de Recompensas</h2>
+                <p>Crie, edite e gerencie as recompensas disponíveis para os usuários.</p>
+                <button class="btn btn-success mb-3"><i class="fas fa-plus-circle me-2"></i>Adicionar Nova Recompensa</button>
+                <div class="card shadow-sm p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Recompensa</th>
+                                <th>Custo (Ecopontos)</th>
+                                <th>Parceiro</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Desconto Mercado X</td>
+                                <td>200</td>
+                                <td>Supermercado Bom Preço</td>
+                                <td>Ativo</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Recarga Celular R$10</td>
+                                <td>100</td>
+                                <td>Operadora Claro</td>
+                                <td>Ativo</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-section" class="dashboard-section">
+                <h2 class="mb-4">Configurações do Sistema</h2>
+                <p>Ajustes gerais do sistema, como valores de ecopontos e integração.</p>
+                <form>
+                    <div class="mb-3">
+                        <label for="ecopointsGlass" class="form-label">Ecopontos por Garrafa de Vidro:</label>
+                        <input type="number" class="form-control" id="ecopointsGlass" value="10">
+                    </div>
+                    <div class="mb-3">
+                        <label for="ecopointsPlastic" class="form-label">Ecopontos por Plástico:</label>
+                        <input type="number" class="form-control" id="ecopointsPlastic" value="5">
+                    </div>
+                    <div class="mb-3">
+                        <label for="adminEmail" class="form-label">Email de Notificação do Admin:</label>
+                        <input type="email" class="form-control" id="adminEmail" value="admin@soueco.com.br">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="src/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* --- Global Utilities for Image Sizing --- */
+.hero-image-container,
+.solution-image-container,
+.gamification-image-container {
+    overflow: hidden;
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.hero-image,
+.solution-image,
+.gamification-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+}
+
+.partner-logo, .ods-logo {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --- Navbar Styles --- */
+.navbar-brand .text-warning {
+    color: #ffc107 !important;
+}
+
+.navbar-nav .nav-link {
+    color: #fff;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffc107;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+    font-weight: bold;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+    color: #212529;
+}
+
+/* --- Hero Section --- */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1532938911077-f2730f2c42d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+    color: #fff;
+    padding: 100px 0;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+}
+
+.ai-badge {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(255, 193, 7, 0.9);
+    color: #212529;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- Sections Styling --- */
+section {
+    padding: 80px 0;
+}
+
+section h2 {
+    font-size: 2.8rem;
+    margin-bottom: 25px;
+}
+
+.badge {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 20px;
+}
+
+/* --- Solution Section --- */
+.solution-image-container {
+    border: 5px solid #007bff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* --- Technology Section --- */
+.tech-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    padding-top: 50px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    height: 100%;
+}
+
+.tech-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.tech-number {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.tech-card .tech-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 3rem;
+    color: rgba(0, 123, 255, 0.1);
+    transition: color 0.3s ease;
+}
+
+.tech-card:hover .tech-icon {
+    color: rgba(0, 123, 255, 0.3);
+}
+
+/* --- Gamification Section --- */
+.reward-card {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.reward-card:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.reward-icon {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    background-color: #ffc107;
+    color: #212529;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-right: 20px;
+}
+
+.reward-content h5 {
+    font-weight: bold;
+    color: #fff;
+}
+
+.reward-content p {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.gamification-image-container {
+    border: 5px solid #ffc107;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* --- Impact Section --- */
+.impact-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.impact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.impact-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.ods-card {
+    background-color: #212529;
+    color: #fff;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.ods-card img {
+    border-radius: 5px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* --- Partners Section --- */
+.partner-logo {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.partner-logo:hover {
+    opacity: 1;
+}
+
+/* --- CTA Section --- */
+.form-control-lg, .form-select-lg {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+}
+
+/* --- Footer --- */
+footer {
+    background-color: #212529 !important;
+    color: #fff;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #ffc107;
+}
+
+footer .fa-recycle {
+    color: #ffc107;
+}
+
+.bg-gray-800 {
+    background-color: #495057 !important;
+}
+
+/* --- Dashboard Specific Styles --- */
+#wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Cor de fundo da sidebar */
+.bg-sidebar {
+    background-color: #3c3f48 !important; /* Cinza escuro para a sidebar */
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    transition: margin .25s ease-out, width .25s ease-out; /* Transição para a largura e margem */
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    overflow: hidden; /* Esconde o conteúdo que transborda */
+}
+
+/* Estilo da logo dentro da sidebar */
+.logo-dashboard {
+    max-width: 90%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Estilo para os itens da lista da sidebar (ícones e texto) */
+#sidebar-wrapper .list-group-item {
+    padding: 0.875rem 0.5rem !important; /* Padding ajustado para a largura compacta */
+    text-align: center; /* Centraliza o ícone e o texto */
+    white-space: nowrap; /* Impede a quebra de linha do texto */
+    overflow: hidden; /* Esconde o texto que transborda */
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+    color: #fff; /* Cor do texto e ícone dos links */
+    display: flex; /* Usa flexbox para alinhar ícone e texto */
+    flex-direction: column; /* Ícone acima do texto quando compacto */
+    align-items: center; /* Centraliza itens na coluna */
+    justify-content: center;
+}
+
+#sidebar-wrapper .list-group-item i {
+    margin-right: 0 !important; /* Remove margem lateral do ícone */
+    margin-bottom: 5px; /* Pequeno espaço entre ícone e texto */
+    font-size: 1.2rem; /* Tamanho do ícone */
+}
+
+/* Esconde o texto dos links por padrão (estado compactado da sidebar) */
+#sidebar-wrapper .list-group-item span {
+    display: none; /* Esconde o texto */
+    font-size: 0.75rem; /* Tamanho da fonte menor para o texto */
+}
+
+#page-content-wrapper {
+    flex-grow: 1;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+/* ESTADOS DA SIDEBAR */
+
+/* Estado Padrão (desktop e mobile não toggled) */
+#sidebar-wrapper {
+    width: 90px; /* Largura inicial compacta */
+}
+
+/* Estado da sidebar recolhida (aplicado via JS no body class sidebar-collapsed) */
+body.sidebar-collapsed #sidebar-wrapper {
+    width: 90px; /* Garante que comece recolhida em desktop */
+    margin-left: 0; /* Visível em desktop */
+}
+
+body.sidebar-collapsed #sidebar-wrapper .list-group-item span {
+    display: none; /* Esconde o texto quando recolhida */
+}
+
+/* Estado da sidebar expandida (quando o menu toggle é clicado ou em hover) */
+#wrapper.toggled #sidebar-wrapper,
+body.sidebar-collapsed #sidebar-wrapper:hover { /* Hover para desktop */
+    width: 240px; /* Largura expandida */
+    margin-left: 0; /* Mostra a sidebar */
+}
+
+#wrapper.toggled #sidebar-wrapper .list-group-item span,
+body.sidebar-collapsed #sidebar-wrapper:hover .list-group-item span { /* Hover para desktop */
+    display: inline-block; /* Mostra o texto quando expandido */
+    margin-left: 10px; /* Espaço entre ícone e texto */
+    vertical-align: middle; /* Alinha com o ícone */
+    font-size: 1rem; /* Tamanho normal da fonte */
+}
+
+#wrapper.toggled #sidebar-wrapper .list-group-item i,
+body.sidebar-collapsed #sidebar-wrapper:hover .list-group-item i { /* Hover para desktop */
+    display: inline-block; /* Ícone na mesma linha do texto */
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+/* MEDIA QUERIES para Responsividade */
+
+/* Para telas menores que 768px (celulares e tablets) */
+@media (max-width: 767.98px) {
+    #sidebar-wrapper {
+        margin-left: -90px; /* Esconde a sidebar por padrão em mobile */
+        width: 90px; /* Largura recolhida em mobile */
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0; /* Mostra a sidebar em mobile quando toggled */
+        width: 240px; /* Largura expandida em mobile quando toggled */
+    }
+
+    /* Em mobile, quando toggled, os itens devem mostrar texto e ícone lado a lado */
+    #wrapper.toggled #sidebar-wrapper .list-group-item {
+        flex-direction: row; /* Ícone e texto lado a lado */
+    }
+
+    #wrapper.toggled #sidebar-wrapper .list-group-item i {
+        margin-right: 10px !important; /* Espaço entre ícone e texto */
+        margin-bottom: 0;
+    }
+
+    #wrapper.toggled #sidebar-wrapper .list-group-item span {
+        display: inline-block; /* Mostra o texto */
+    }
+
+    /* Garante que o body não inicie com sidebar-collapsed em mobile */
+    body.sidebar-collapsed #sidebar-wrapper {
+        margin-left: -90px; /* Esconde em mobile por padrão */
+    }
+}
+
+/* Para telas maiores que 768px (desktops) */
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        width: 90px; /* Largura padrão menor em desktops */
+        margin-left: 0; /* Visível por padrão em desktops */
+    }
+
+    /* Recolher a sidebar em desktop quando 'toggled' */
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -90px;
+    }
+
+    /* Efeito de hover para expandir a sidebar em desktops */
+    #sidebar-wrapper:hover {
+        width: 240px;
+    }
+
+    #sidebar-wrapper:hover .list-group-item {
+        flex-direction: row; /* Ícone e texto lado a lado no hover */
+    }
+
+    #sidebar-wrapper:hover .list-group-item i {
+        margin-right: 10px !important;
+        margin-bottom: 0;
+    }
+
+    #sidebar-wrapper:hover .list-group-item span {
+        display: inline-block;
+    }
+
+    /* Quando a sidebar está recolhida em desktop (estado padrão ou toggled), o texto deve estar escondido */
+    body.sidebar-collapsed #sidebar-wrapper .list-group-item span {
+        display: none;
+    }
+
+    /* Garante que o hover em desktop funcione apenas se não estiver "toggled" */
+    #wrapper.toggled #sidebar-wrapper:hover {
+        width: 90px; /* Não expande se já estiver toggled (recolhido) */
+        margin-left: -90px;
+    }
+    #wrapper.toggled #sidebar-wrapper:hover .list-group-item span {
+        display: none; /* Não mostra o texto */
+    }
+}
+
+.list-group-item.current-page {
+    background-color: #007bff !important;
+    color: #fff !important;
+    border-left: 5px solid #ffc107;
+}
+
+.icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.dashboard-section {
+    display: none;
+}
+
+.dashboard-section.active {
+    display: block;
+}
+
+/* Cores dos Cards de Resumo */
+.card.bg-users {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+.card.bg-material {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.card.bg-ecopoints {
+    background-color: #17a2b8 !important;
+    color: #fff !important;
+}
+
+.card.bg-sessions {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.card.bg-users .card-title,
+.card.bg-material .card-title,
+.card.bg-ecopoints .card-title {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.card.bg-sessions .card-title {
+    color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.card.bg-users .icon-circle,
+.card.bg-material .icon-circle,
+.card.bg-ecopoints .icon-circle {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+}
+
+.card.bg-sessions .icon-circle {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    color: #212529 !important;
+}
+
+/* Ajustes para Gráficos */
+.card canvas {
+    max-height: 300px;
+    width: 100% !important;
+    height: auto !important;
+}
+
+#pointsPerMaterialChart,
+#materialRecyclingChart {
+    max-height: 250px;
+    height: auto;
+}
+
+#dailyRecyclingChart {
+    max-height: 200px;
+    height: auto;
+}
+
+.card.shadow-sm.h-100.p-3 {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajustes para a tabela de ranking */
+.table-responsive {
+    overflow-x: auto;
+}
