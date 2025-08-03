@@ -4,29 +4,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>souEco | Painel do Catador</title>
-    <!-- Mesmas dependências -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="src/style.css"> <!-- Mesmo CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Estilos CSS */
+        :root {
+            --primary-color: #28a745; /* Verde principal do souEco */
+            --secondary-color: #007bff; /* Azul secundário */
+            --text-color: #333; /* Cor padrão para textos do corpo */
+            --light-gray: #f8f9fa; /* Fundo claro da página */
+            --dark-gray: #6c757d;
+
+            /* Cores do Menu Aprimoradas (para preto puro e contraste) */
+            --menu-bg: #000000; /* Fundo PRETO PURO para o menu */
+            --menu-text-color: #ffffff; /* Texto BRANCO PURO padrão do menu */
+            --menu-hover-bg: #1a1a1a; /* Fundo MUITO ESCURO no hover, quase preto */
+            --menu-active-bg: var(--primary-color); /* Fundo VERDE para item ativo (destaque) */
+            --menu-border-active: #00bfff; /* Borda lateral AZUL CLARO para destaque */
+            --menu-heading-border: #333333; /* Borda discreta para o cabeçalho do menu */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+        }
+
+        #wrapper {
+            display: flex;
+            width: 100vw; /* Garante que o wrapper ocupe 100% da largura da viewport */
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar Fixa e com Contrastes Melhorados */
+        #sidebar-wrapper {
+            min-height: 100vh;
+            width: 15rem; /* Largura fixa */
+            background-color: var(--menu-bg); /* Fundo PRETO PURO */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.6); /* Sombra mais forte para profundidade */
+            position: fixed; /* Tornar a sidebar fixa */
+            top: 0; /* Alinhar ao topo */
+            left: 0; /* Alinhar à esquerda */
+            z-index: 1000; /* Garantir que fique acima de outros elementos */
+            transition: margin 0.25s ease-out; /* Transição para recolher/expandir */
+            margin-left: 0; /* Inicia visível por padrão */
+            border-right: none; /* Remover borda lateral */
+        }
+
+        /* Estado "toggled": sidebar recolhida */
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -15rem; /* Esconde a sidebar */
+        }
+
+        /* Ajuste do Conteúdo Principal para não ser coberto pelo menu */
+        #page-content-wrapper {
+            flex-grow: 1; /* Permite que ocupe o espaço restante */
+            margin-left: 15rem; /* Empurra o conteúdo para a direita pela largura da sidebar */
+            transition: margin 0.25s ease-out; /* Transição suave */
+            padding-left: 1.5rem; /* Aumentar padding esquerdo */
+            padding-right: 1.5rem; /* Aumentar padding direito */
+        }
+
+        /* Quando a sidebar está recolhida, o conteúdo ocupa 100% e não tem margem */
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0; /* Conteúdo encosta na esquerda */
+        }
+
+        .sidebar-heading {
+            border-bottom: 1px solid var(--menu-heading-border); /* Borda mais escura e discreta */
+            padding: 1.5rem 0;
+        }
+
+        /* Logo em Formato Original */
+        .sidebar-heading .logo-dashboard {
+            max-width: 100px;
+            height: auto;
+            border-radius: 0;
+            border: none;
+            padding: 0;
+            background-color: transparent;
+        }
+
+        .list-group-item {
+            border: none;
+            border-radius: 0;
+            color: var(--menu-text-color) !important; /* Cor de texto BRANCO PURO padrão do menu */
+            background-color: var(--menu-bg); /* Garante que o fundo do item seja o preto do menu */
+            padding: 1rem 1.5rem; /* Espaçamento vertical */
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .list-group-item i {
+            margin-right: 12px;
+            font-size: 1.2rem;
+            color: var(--menu-text-color); /* Cor do ícone BRANCO PURO padrão */
+        }
+
+        /* Contraste Melhorado para Hover e Item Ativo */
+        .list-group-item:hover {
+            background-color: var(--menu-hover-bg) !important; /* Fundo MUITO ESCURO no hover */
+            color: var(--menu-text-color) !important; /* Texto BRANCO PURO no hover */
+        }
+        .list-group-item:hover i {
+            color: var(--menu-text-color) !important; /* Ícone BRANCO PURO no hover */
+        }
+
+        .list-group-item.current-page {
+            background-color: var(--menu-active-bg) !important; /* Fundo VERDE para item ativo */
+            color: var(--text-color) !important; /* Texto escuro sobre o verde */
+            border-left: 5px solid var(--menu-border-active); /* Borda lateral AZUL CLARO para destaque */
+        }
+        .list-group-item.current-page i {
+            color: var(--text-color) !important; /* Ícone escuro para combinar com o texto ativo */
+        }
+
+        /* Estilos dos Cards de Resumo */
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .card-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .bg-ecopoints {
+            background: linear-gradient(135deg, #fce043, #f5d400);
+            color: #7a6a00;
+        }
+
+        .bg-material {
+            background: linear-gradient(135deg, #a8e063, #56ab2f);
+            color: #2e5a19;
+        }
+
+        .bg-pending {
+            background: linear-gradient(135deg, #f7b731, #f48a00);
+            color: #7a4700;
+        }
+
+        .bg-completed {
+            background: linear-gradient(135deg, #83a4d4, #b6fbff);
+            color: #3b4e6d;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Seções do Dashboard */
+        .dashboard-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Botões */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-success {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .navbar-light {
+            background-color: #fff !important;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* Container para os gráficos para melhor ajuste de altura */
+        .chart-container {
+            position: relative;
+            height: 300px; /* Define uma altura fixa para o container do gráfico */
+            width: 100%;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            #wrapper {
+                flex-direction: column;
+            }
+
+            #sidebar-wrapper {
+                margin-left: -15rem; /* Esconde a sidebar por padrão em telas pequenas */
+                width: 100%;
+                min-height: auto;
+                position: relative; /* Volta a ser relativa para rolar com o conteúdo */
+                box-shadow: none;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0; /* Mostra a sidebar quando toggled */
+            }
+
+            #page-content-wrapper {
+                width: 100vw; /* Ocupa a largura total */
+                margin-left: 0; /* Conteúdo sempre alinhado */
+                padding-left: 1rem; /* Padding menor para mobile */
+                padding-right: 1rem; /* Padding menor para mobile */
+            }
+
+            /* Quando o menu está visível em mobile, empurra o conteúdo para baixo */
+            #wrapper.toggled #page-content-wrapper {
+                padding-top: 15rem; /* Dá espaço para a sidebar que aparece acima */
+            }
+        }
+    </style>
 </head>
-<body id="dashboard-page" class="sidebar-collapsed">
+<body id="dashboard-page">
 <div class="d-flex" id="wrapper">
-    <!-- Sidebar (adaptado para catadores) -->
     <div class="bg-sidebar border-right" id="sidebar-wrapper">
         <div class="sidebar-heading text-center py-4">
             <img src="src/assets/icons/soueco.jpg" alt="logo souEco" class="img-fluid logo-dashboard">
         </div>
         <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3 current-page" data-section="overview"><i class="fas fa-chart-line"></i> <span>Meu Desempenho</span></a>
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="materials"><i class="fas fa-recycle"></i> <span>Materiais Coletados</span></a>
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="rewards"><i class="fas fa-gift"></i> <span>Recompensas</span></a>
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="collection"><i class="fas fa-calendar-alt"></i> <span>Agendamentos</span></a>
-            <a href="index.html" class="list-group-item list-group-item-action bg-sidebar text-white p-3 mt-auto"><i class="fas fa-home"></i> <span>Voltar ao Site</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3 current-page" data-section="overview"><i class="fas fa-chart-line"></i> <span>Meu Desempenho</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3" data-section="materials"><i class="fas fa-recycle"></i> <span>Materiais Coletados</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3" data-section="rewards"><i class="fas fa-gift"></i> <span>Recompensas</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3" data-section="collection"><i class="fas fa-calendar-alt"></i> <span>Agendamentos</span></a>
+            <a href="index.html" class="list-group-item list-group-item-action p-3 mt-auto" id="backToSiteLink"><i class="fas fa-home"></i> <span>Voltar ao Site</span></a>
         </div>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div id="page-content-wrapper">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <button class="btn btn-primary ms-2" id="menu-toggle"><i class="fas fa-bars"></i></button>
@@ -36,11 +287,9 @@
         </nav>
 
         <div class="container-fluid py-4">
-            <!-- Seção de Visão Geral (adaptada) -->
             <div id="overview-section" class="dashboard-section active">
                 <h2 class="mb-4">Meu Desempenho</h2>
                 <div class="row g-4 mb-4">
-                    <!-- Cards de Resumo (adaptados) -->
                     <div class="col-lg-3 col-md-6">
                         <div class="card shadow-sm h-100 bg-ecopoints">
                             <div class="card-body">
@@ -67,27 +316,28 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Adicione mais cards conforme necessário -->
-                </div>
+                    </div>
 
-                <!-- Gráficos (pode reutilizar os mesmos com dados do catador) -->
                 <div class="row g-4 mb-4">
                     <div class="col-lg-6">
                         <div class="card shadow-sm h-100 p-3">
-                            <h5 class="card-title">Meus Materiais (Kg)</h5>
-                            <canvas id="myMaterialsChart"></canvas>
+                            <h5 class="card-title">Distribuição de Materiais Coletados (Kg)</h5>
+                            <div class="chart-container">
+                                <canvas id="myMaterialsChart"></canvas>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="card shadow-sm h-100 p-3">
-                            <h5 class="card-title">Minha Evolução Mensal</h5>
-                            <canvas id="myMonthlyChart"></canvas>
+                            <h5 class="card-title">Evolução Mensal de Coleta (Kg)</h5>
+                            <div class="chart-container">
+                                <canvas id="myMonthlyChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Seção de Materiais Coletados -->
             <div id="materials-section" class="dashboard-section">
                 <h2 class="mb-4">Materiais Coletados</h2>
                 <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addMaterialModal">
@@ -99,37 +349,144 @@
                             <thead>
                             <tr>
                                 <th>Data</th>
-                                <th>Material</th>
+                                <th>Tipo de Material</th>
+                                <th>Material Específico</th>
                                 <th>Quantidade (Kg)</th>
                                 <th>Ecopontos</th>
                                 <th>Local</th>
                                 <th>Ações</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="materialTableBody">
                             <tr>
-                                <td>26/05/2024</td>
-                                <td>Plástico PET</td>
-                                <td>15</td>
-                                <td>75</td>
+                                <td>15/04/2025</td>
+                                <td>Papéis</td>
+                                <td>Jornal</td>
+                                <td>18.0</td>
+                                <td>72</td>
+                                <td>Residência Silva</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/05/2025</td>
+                                <td>Vidros</td>
+                                <td>Garrafas (Cerveja)</td>
+                                <td>25.0</td>
+                                <td>50</td>
+                                <td>Bar do Zeca</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>10/06/2025</td>
+                                <td>Plásticos</td>
+                                <td>PEAD (Frascos)</td>
+                                <td>12.0</td>
+                                <td>60</td>
+                                <td>Condomínio Verde</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>01/08/2025</td>
+                                <td>Metais</td>
+                                <td>Alumínio (Latas)</td>
+                                <td>10.5</td>
+                                <td>105</td>
                                 <td>Ecoponto Centro</td>
                                 <td>
                                     <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
                                     <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
                                 </td>
                             </tr>
-                            <!-- Mais linhas de exemplo -->
+                            <tr>
+                                <td>28/07/2025</td>
+                                <td>Plásticos</td>
+                                <td>PET (Garrafas de Refrigerante/Água)</td>
+                                <td>15.2</td>
+                                <td>91</td>
+                                <td>Rua do Comércio, 123</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>25/07/2025</td>
+                                <td>Metais</td>
+                                <td>Ferro (Sucata Comum)</td>
+                                <td>30.0</td>
+                                <td>150</td>
+                                <td>Ferro Velho do Zé</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>20/07/2025</td>
+                                <td>Papéis</td>
+                                <td>Papelão</td>
+                                <td>22.8</td>
+                                <td>91</td>
+                                <td>Condomínio Alpha</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>18/07/2025</td>
+                                <td>Eletrônicos</td>
+                                <td>Celulares e Acessórios</td>
+                                <td>2.5</td>
+                                <td>63</td>
+                                <td>Ponto de Coleta Eletrônico</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>15/07/2025</td>
+                                <td>Metais</td>
+                                <td>Cobre</td>
+                                <td>5.1</td>
+                                <td>92</td>
+                                <td>Oficina Mecânica João</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>10/07/2025</td>
+                                <td>Orgânicos</td>
+                                <td>Restos de Alimentos (Mercado)</td>
+                                <td>50.0</td>
+                                <td>50</td>
+                                <td>Feira Livre Central</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Seção de Recompensas -->
             <div id="rewards-section" class="dashboard-section">
                 <h2 class="mb-4">Recompensas Disponíveis</h2>
                 <div class="row">
-                    <!-- Cards de recompensas -->
                     <div class="col-md-4 mb-4">
                         <div class="card shadow-sm h-100">
                             <img src="src/assets/img/mercado.jpeg" class="card-img-top" alt="Desconto Mercado">
@@ -143,31 +500,509 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Mais cards de recompensas -->
-                </div>
+                    </div>
             </div>
 
-            <!-- Seção de Agendamentos -->
             <div id="collection-section" class="dashboard-section">
                 <h2 class="mb-4">Meus Agendamentos</h2>
                 <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#newScheduleModal">
                     <i class="fas fa-plus-circle me-2"></i>Novo Agendamento
                 </button>
                 <div class="card shadow-sm p-3">
-                    <!-- Conteúdo de agendamentos -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modais (adicionar conforme necessidade) -->
-<div class="modal fade" id="addMaterialModal" tabindex="-1" aria-hidden="true">
-    <!-- Conteúdo do modal para adicionar materiais -->
+<div class="modal fade" id="addMaterialModal" tabindex="-1" aria-labelledby="addMaterialModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMaterialModalLabel">Registrar Nova Coleta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addMaterialForm">
+                    <div class="mb-3">
+                        <label for="materialType" class="form-label">Tipo de Material</label>
+                        <select class="form-select" id="materialType" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="metais">Metais</option>
+                            <option value="plasticos">Plásticos</option>
+                            <option value="papeis">Papéis</option>
+                            <option value="vidros">Vidros</option>
+                            <option value="eletronicos">Lixo Eletrônico</option>
+                            <option value="organicos">Orgânicos</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="specificMaterialGroup" style="display: none;">
+                        <label for="specificMaterial" class="form-label">Material Específico</label>
+                        <select class="form-select" id="specificMaterial" required>
+                            </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantidade (Kg)</label>
+                        <input type="number" class="form-control" id="quantity" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="collectionLocation" class="form-label">Local de Coleta</label>
+                        <input type="text" class="form-control" id="collectionLocation" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="fromTotem">
+                        <label class="form-check-label" for="fromTotem">
+                            Coleta realizada via Totem de Autoatendimento
+                        </label>
+                    </div>
+                    <div class="mb-3" id="totemWeightInfo" style="display: none;">
+                        <div class="alert alert-info" role="alert">
+                            Aguardando leitura da balança do totem...
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <p class="mt-2" id="totemWeightDisplay">Peso detectado: -- Kg</p>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar Coleta</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Mesmos scripts -->
+<div class="modal fade" id="newScheduleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Novo Agendamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Formulário para agendamento de coleta.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary">Agendar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="src/script-catadores.js"></script> <!-- Novo JS específico -->
+
+<script>
+    // Código JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('menu-toggle');
+        const wrapper = document.getElementById('wrapper');
+        const dashboardSections = document.querySelectorAll('.dashboard-section');
+        const sidebarLinks = document.querySelectorAll('.list-group-item-action');
+        const backToSiteLink = document.getElementById('backToSiteLink'); // Adicionado para o link "Voltar ao Site"
+
+        // --- Lógica do Menu Lateral (Consistente com o do Gestor) ---
+        // Inicializa o menu expandido ou recolhido dependendo do tamanho da tela
+        function setInitialSidebarState() {
+            if (window.innerWidth > 768) {
+                 wrapper.classList.remove('toggled'); // Começa expandido em desktop
+            } else {
+                 wrapper.classList.add('toggled'); // Começa recolhido em mobile
+            }
+        }
+        setInitialSidebarState(); // Chama na carga da página
+
+        // Adiciona um listener para redimensionamento da janela
+        window.addEventListener('resize', setInitialSidebarState);
+
+
+        if (sidebarToggle && wrapper) {
+            sidebarToggle.addEventListener('click', function() {
+                wrapper.classList.toggle('toggled');
+            });
+        }
+
+        sidebarLinks.forEach(link => {
+            // Adicionado: Verifique se o link NÃO é o botão "Voltar ao Site"
+            if (link !== backToSiteLink) { // Alterado aqui
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); // Só impede o comportamento padrão para links internos do dashboard
+                    const targetSection = this.dataset.section;
+
+                    dashboardSections.forEach(section => section.classList.remove('active'));
+                    sidebarLinks.forEach(item => item.classList.remove('current-page'));
+
+                    const sectionToShow = document.getElementById(`${targetSection}-section`);
+                    if (sectionToShow) {
+                        sectionToShow.classList.add('active');
+                    }
+                    this.classList.add('current-page');
+
+                    // Em telas menores (mobile), o menu se recolhe ao clicar em um item.
+                    if (window.innerWidth <= 768 && wrapper.classList.contains('toggled')) {
+                        wrapper.classList.remove('toggled');
+                    }
+                });
+            }
+            // O link "Voltar ao Site" terá seu comportamento padrão (navegar para index.html)
+        });
+
+        // Lógica para o Modal de Adicionar Material e Totem
+        const materialTypeSelect = document.getElementById('materialType');
+        const specificMaterialGroup = document.getElementById('specificMaterialGroup');
+        const specificMaterialSelect = document.getElementById('specificMaterial');
+        const addMaterialForm = document.getElementById('addMaterialForm');
+        const materialTableBody = document.getElementById('materialTableBody');
+        const fromTotemCheckbox = document.getElementById('fromTotem');
+        const totemWeightInfo = document.getElementById('totemWeightInfo');
+        const totemWeightDisplay = document.getElementById('totemWeightDisplay');
+        const quantityInput = document.getElementById('quantity');
+
+        // Dados de materiais específicos com base na separação real de um catador
+        const materialsData = {
+            metais: [
+                'Alumínio (Latas)', 'Ferro (Sucata Comum)', 'Cobre', 'Bronze', 'Aço Inox',
+                'Zinco', 'Chumbo', 'Fio Elétrico (Cobre)', 'Latão', 'Panela de Alumínio', 'Latas de Aço (Molho, Leite Condensado)'
+            ],
+            plasticos: [
+                'PET (Garrafas de Refrigerante/Água)', 'PEAD (Frascos de Limpeza/Óleo)',
+                'PVC (Tubos, Conexões, Plástico Filme)', 'PP (Potes de Margarina, Copos)',
+                'PS (Copo Descartável, Bandeja de Isopor)', 'Outros Plásticos (Sacolas, Brinquedos)'
+            ],
+            papeis: [
+                'Papelão', 'Jornal', 'Revista', 'Papel Branco (Escritório)',
+                'Caixas Longa Vida (Tetra Pak)', 'Papel Misto (Folhas Coloridas, Impressos)'
+            ],
+            vidros: [
+                'Garrafas (Cerveja, Refrigerante, Vinho)', 'Potes de Alimentos (Conservas, Doces)',
+                'Vidros Planos (Janelas, Espelhos - cacos grandes e limpos)', 'Frascos de Perfumes/Remédios'
+            ],
+            eletronicos: [
+                'Celulares e Acessórios', 'Notebooks e Tablets', 'Fios e Cabos Diversos',
+                'Baterias e Pilhas', 'Placas de Circuito (PCI)', 'Eletrodomésticos Pequenos (Batedeira, Ferro)',
+                'Monitores e TVs (CRT/LCD/LED)', 'Periféricos de Informática (Teclado, Mouse)', 'Discos Rígidos (HDs)'
+            ],
+            organicos: [
+                'Restos de Alimentos (Frutas, Legumes, Cascas)', 'Podas de Jardim (Folhas, Galhos Pequenos)',
+                'Borra de Café/Chá', 'Casca de Ovo', 'Serragem'
+            ]
+        };
+
+        // Atualiza as opções de material específico com base no tipo selecionado
+        materialTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+            specificMaterialSelect.innerHTML = '<option value="">Selecione o material</option>';
+
+            if (selectedType && materialsData[selectedType]) {
+                materialsData[selectedType].forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = material.toLowerCase().replace(/[\s\(\)\/]/g, '');
+                    option.textContent = material;
+                    specificMaterialSelect.appendChild(option);
+                });
+                specificMaterialGroup.style.display = 'block';
+            } else {
+                specificMaterialGroup.style.display = 'none';
+            }
+        });
+
+        // Lógica para o checkbox "Coleta via Totem"
+        fromTotemCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                totemWeightInfo.style.display = 'block';
+                quantityInput.setAttribute('readonly', true);
+                simulateTotemWeight();
+            } else {
+                totemWeightInfo.style.display = 'none';
+                quantityInput.removeAttribute('readonly');
+                quantityInput.value = '';
+                totemWeightDisplay.textContent = 'Peso detectado: -- Kg';
+            }
+        });
+
+        // Simulação da leitura da balança do totem
+        function simulateTotemWeight() {
+            totemWeightDisplay.textContent = 'Aguardando leitura da balança do totem...';
+            setTimeout(() => {
+                const simulatedWeight = (Math.random() * 50 + 1).toFixed(2);
+                quantityInput.value = simulatedWeight;
+                totemWeightDisplay.textContent = `Peso detectado: ${simulatedWeight} Kg`;
+            }, 3000);
+        }
+
+        // Lidar com o envio do formulário de adicionar material
+        addMaterialForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const data = new Date().toLocaleDateString('pt-BR', { dateStyle: 'short' });
+            const tipoMaterial = materialTypeSelect.options[materialTypeSelect.selectedIndex].text;
+            const materialEspecifico = specificMaterialSelect.options[specificMaterialSelect.selectedIndex].text;
+            const quantidade = parseFloat(quantityInput.value);
+            const localColeta = document.getElementById('collectionLocation').value;
+
+            // Cálculo de Ecopontos (ajustado para ser mais granular e realista)
+            let ecopointsPerKg = 0;
+            switch(materialEspecifico) {
+                case 'Alumínio (Latas)': ecopointsPerKg = 12; break;
+                case 'Cobre': ecopointsPerKg = 18; break;
+                case 'Ferro (Sucata Comum)': ecopointsPerKg = 5; break;
+                case 'Aço Inox': ecopointsPerKg = 15; break;
+                case 'Fio Elétrico (Cobre)': ecopointsPerKg = 16; break;
+                case 'Celulares e Acessórios': ecopointsPerKg = 25; break;
+                case 'Placas de Circuito (PCI)': ecopointsPerKg = 30; break;
+                case 'Notebooks e Tablets': ecopointsPerKg = 22; break;
+                case 'PET (Garrafas de Refrigerante/Água)': ecopointsPerKg = 6; break;
+                case 'PEAD (Frascos de Limpeza/Óleo)': ecopointsPerKg = 5; break;
+                case 'Papelão': ecopointsPerKg = 4; break;
+                case 'Papel Branco (Escritório)': ecopointsPerKg = 5; break;
+                case 'Garrafas (Cerveja, Refrigerante, Vinho)': ecopointsPerKg = 2; break;
+                default: ecopointsPerKg = 1; // Valor padrão para outros ou orgânicos
+            }
+            const ecopoints = quantidade * ecopointsPerKg;
+
+            const newRow = `
+                <tr>
+                    <td>${data}</td>
+                    <td>${tipoMaterial}</td>
+                    <td>${materialEspecifico}</td>
+                    <td>${quantidade.toFixed(2)}</td>
+                    <td>${ecopoints.toFixed(0)}</td>
+                    <td>${localColeta}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                    </td>
+                </tr>
+            `;
+            materialTableBody.insertAdjacentHTML('beforeend', newRow);
+
+            // Limpa o formulário e fecha o modal
+            addMaterialForm.reset();
+            specificMaterialGroup.style.display = 'none';
+            totemWeightInfo.style.display = 'none';
+            quantityInput.removeAttribute('readonly');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addMaterialModal'));
+            modal.hide();
+
+            console.log('Dados da coleta para envio ao backend:', {
+                data: data,
+                tipoMaterial: tipoMaterial,
+                materialEspecifico: materialEspecifico,
+                quantidade: quantidade,
+                ecopoints: ecopoints,
+                localColeta: localColeta,
+                fromTotem: fromTotemCheckbox.checked
+            });
+            updateCharts(); // Atualiza os gráficos após nova coleta
+        });
+
+        // Gráficos (mantidos com dados de exemplo, mas preparados para dados reais)
+        const myMaterialsCtx = document.getElementById('myMaterialsChart').getContext('2d');
+        const myMonthlyCtx = document.getElementById('myMonthlyChart').getContext('2d');
+
+        // Ordem correta dos meses para os gráficos (global para ser acessível na updateCharts)
+        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+        // Dados iniciais (podem ser vazios, serão preenchidos pela updateCharts)
+        let collectedData = {};
+        let monthlyData = {};
+
+        const chartColors = [
+            '#FFD700', // Alumínio (Dourado)
+            '#A9A9A9', // Ferro (Cinza Escuro)
+            '#CD7F32', // Cobre (Bronze)
+            '#00BFFF', // PET (Azul Claro)
+            '#8B4513', // Papelão (Marrom)
+            '#6A5ACD', // Lixo Eletrônico (Azul Ardósia)
+            '#556B2F', // Orgânicos (Verde Oliva)
+            '#FF6347',
+            '#4682B4',
+            '#DA70D6',
+            '#808000', // Olive
+            '#FF4500'  // OrangeRed
+        ];
+
+        let myMaterialsChart = new Chart(myMaterialsCtx, {
+            type: 'pie',
+            data: {
+                labels: [], // Inicialmente vazio, preenchido por updateCharts
+                datasets: [{
+                    data: [], // Inicialmente vazio, preenchido por updateCharts
+                    backgroundColor: chartColors, // Usar todas as cores disponíveis
+                    borderColor: '#fff',
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Permite que a altura máxima seja respeitada
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Composição da Coleta por Material (Kg)',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    label += context.parsed.toFixed(1) + ' Kg (' + percentage + '%)';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        let myMonthlyChart = new Chart(myMonthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: [], // Inicialmente vazio, preenchido por updateCharts
+                datasets: [{
+                    label: 'Kg Coletados',
+                    data: [], // Inicialmente vazio, preenchido por updateCharts
+                    backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Permite que a altura máxima seja respeitada
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Quantidade (Kg)',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Evolução Mensal de Coleta (Kg)',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
+                        }
+                    }
+                },
+                elements: {
+                    bar: {
+                        borderSkipped: false,
+                    }
+                }
+            }
+        });
+
+        // Função para atualizar os dados dos gráficos (agora mais robusta)
+        function updateCharts() {
+            let currentCollectedData = {};
+            let currentMonthlyData = {};
+
+            document.querySelectorAll('#materialTableBody tr').forEach(row => {
+                const materialEspecifico = row.children[2].textContent;
+                const quantidade = parseFloat(row.children[3].textContent);
+                
+                // Extrai dia, mês e ano da string (DD/MM/YYYY)
+                const dateParts = row.children[0].textContent.split('/');
+                const day = parseInt(dateParts[0]);
+                const month = parseInt(dateParts[1]) - 1; // Mês é 0-indexed no JS (0 para Jan, 1 para Fev...)
+                const year = parseInt(dateParts[2]);
+
+                const dataColeta = new Date(year, month, day);
+                const monthAbbr = monthNames[dataColeta.getMonth()]; // Usa o array monthNames para o label do mês
+                const yearMonthKey = `${monthAbbr}-${dataColeta.getFullYear()}`; // Chave única para Mês-Ano
+
+
+                if (currentCollectedData[materialEspecifico]) {
+                    currentCollectedData[materialEspecifico] += quantidade;
+                } else {
+                    currentCollectedData[materialEspecifico] = quantidade;
+                }
+
+                if (currentMonthlyData[yearMonthKey]) { // Usa a chave Mês-Ano para acumular
+                    currentMonthlyData[yearMonthKey] += quantidade;
+                } else {
+                    currentMonthlyData[yearMonthKey] = quantidade;
+                }
+            });
+
+            // Ordena os meses-ano para o gráfico de barras
+            const sortedMonthYearKeys = Object.keys(currentMonthlyData).sort((a, b) => {
+                const [monthA, yearA] = a.split('-');
+                const [monthB, yearB] = b.split('-');
+                const dateA = new Date(yearA, monthNames.indexOf(monthA), 1);
+                const dateB = new Date(yearB, monthNames.indexOf(monthB), 1);
+                return dateA - dateB;
+            });
+
+            myMonthlyChart.data.labels = sortedMonthYearKeys;
+            myMonthlyChart.data.datasets[0].data = sortedMonthYearKeys.map(key => currentMonthlyData[key]);
+            
+            myMaterialsChart.data.labels = Object.keys(currentCollectedData);
+            myMaterialsChart.data.datasets[0].data = Object.values(currentCollectedData);
+            
+            myMaterialsChart.update();
+            myMonthlyChart.update();
+
+             // Atualiza os valores nos cards de resumo (calculando a partir dos dados da tabela)
+            let totalEcopoints = 0;
+            let totalRecycledWeight = 0;
+            document.querySelectorAll('#materialTableBody tr').forEach(row => {
+                totalEcopoints += parseFloat(row.children[4].textContent);
+                totalRecycledWeight += parseFloat(row.children[3].textContent);
+            });
+
+            document.getElementById('myEcopoints').textContent = totalEcopoints.toLocaleString('pt-BR');
+            document.getElementById('myRecycledWeight').textContent = totalRecycledWeight.toFixed(0);
+        }
+
+        // Chama updateCharts ao carregar a página para popular os gráficos com os exemplos iniciais
+        updateCharts();
+    });
+</script>
 </body>
 </html>

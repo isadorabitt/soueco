@@ -6,22 +6,275 @@
     <title>souEco | Dashboard de Gestão</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="src/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Estilos CSS */
+        :root {
+            --primary-color: #28a745; /* Verde principal do souEco */
+            --secondary-color: #007bff; /* Azul secundário */
+            --text-color: #333; /* Cor padrão para textos do corpo */
+            --light-gray: #f8f9fa; /* Fundo claro da página */
+            --dark-gray: #6c757d;
+
+            /* Cores do Menu Aprimoradas (para preto puro e contraste) */
+            --menu-bg: #000000; /* Fundo PRETO PURO para o menu */
+            --menu-text-color: #ffffff; /* Texto BRANCO PURO padrão do menu */
+            --menu-hover-bg: #1a1a1a; /* Fundo MUITO ESCURO no hover, quase preto */
+            --menu-active-bg: var(--primary-color); /* Fundo VERDE para item ativo (destaque) */
+            --menu-border-active: #00bfff; /* Borda lateral AZUL CLARO para destaque */
+            --menu-heading-border: #333333; /* Borda discreta para o cabeçalho do menu */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+        }
+
+        #wrapper {
+            display: flex;
+            width: 100vw; /* Garante que o wrapper ocupe 100% da largura da viewport */
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar Fixa e com Contrastes Melhorados */
+        #sidebar-wrapper {
+            min-height: 100vh;
+            width: 15rem; /* Largura fixa */
+            background-color: var(--menu-bg); /* Fundo PRETO PURO */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.6); /* Sombra mais forte para profundidade */
+            position: fixed; /* Tornar a sidebar fixa */
+            top: 0; /* Alinhar ao topo */
+            left: 0; /* Alinhar à esquerda */
+            z-index: 1000; /* Garantir que fique acima de outros elementos */
+            transition: margin 0.25s ease-out; /* Transição para recolher/expandir */
+            margin-left: 0; /* Inicia visível por padrão */
+            border-right: none; /* Remover borda lateral */
+        }
+
+        /* Estado "toggled": sidebar recolhida */
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -15rem; /* Esconde a sidebar */
+        }
+
+        /* Ajuste do Conteúdo Principal para não ser coberto pelo menu */
+        #page-content-wrapper {
+            flex-grow: 1; /* Permite que ocupe o espaço restante */
+            margin-left: 15rem; /* Empurra o conteúdo para a direita pela largura da sidebar */
+            transition: margin 0.25s ease-out; /* Transição suave */
+            /* Ajuste de padding para evitar corte no título */
+            padding-left: 1.5rem; /* Aumentar padding esquerdo */
+            padding-right: 1.5rem; /* Aumentar padding direito */
+        }
+
+        /* Quando a sidebar está recolhida, o conteúdo ocupa 100% e não tem margem */
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0; /* Conteúdo encosta na esquerda */
+        }
+
+        .sidebar-heading {
+            border-bottom: 1px solid var(--menu-heading-border); /* Borda mais escura e discreta */
+            padding: 1.5rem 0;
+        }
+
+        /* Logo em Formato Original */
+        .sidebar-heading .logo-dashboard {
+            max-width: 100px;
+            height: auto;
+            border-radius: 0;
+            border: none;
+            padding: 0;
+            background-color: transparent;
+        }
+
+        .list-group-item {
+            border: none;
+            border-radius: 0;
+            color: var(--menu-text-color) !important; /* Cor de texto BRANCO PURO padrão do menu */
+            background-color: var(--menu-bg); /* Garante que o fundo do item seja o preto do menu */
+            padding: 1rem 1.5rem; /* Espaçamento vertical */
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .list-group-item i {
+            margin-right: 12px;
+            font-size: 1.2rem;
+            color: var(--menu-text-color); /* Cor do ícone BRANCO PURO padrão */
+        }
+
+        /* Contraste Melhorado para Hover e Item Ativo */
+        .list-group-item:hover {
+            background-color: var(--menu-hover-bg) !important; /* Fundo MUITO ESCURO no hover */
+            color: var(--menu-text-color) !important; /* Texto BRANCO PURO no hover */
+        }
+        .list-group-item:hover i {
+            color: var(--menu-text-color) !important; /* Ícone BRANCO PURO no hover */
+        }
+
+        .list-group-item.current-page {
+            background-color: var(--menu-active-bg) !important; /* Fundo VERDE para item ativo */
+            color: var(--text-color) !important; /* Texto escuro sobre o verde */
+            border-left: 5px solid var(--menu-border-active); /* Borda lateral AZUL CLARO para destaque */
+        }
+        .list-group-item.current-page i {
+            color: var(--text-color) !important; /* Ícone escuro para combinar com o texto ativo */
+        }
+
+        /* Estilos dos Cards de Resumo */
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .card-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Cores dos Cards de Resumo */
+        .bg-users {
+            background: linear-gradient(135deg, #6dd5ed, #2193b0); /* Azul claro */
+            color: #0d4a5c;
+        }
+        .bg-material {
+            background: linear-gradient(135deg, #a8e063, #56ab2f); /* Verde claro (mantido) */
+            color: #2e5a19;
+        }
+        .bg-ecopoints {
+            background: linear-gradient(135deg, #fce043, #f5d400); /* Amarelo dourado (mantido) */
+            color: #7a6a00;
+        }
+        .bg-sessions {
+            background: linear-gradient(135deg, #f7b731, #f48a00); /* Laranja */
+            color: #7a4700;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Seções do Dashboard */
+        .dashboard-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Botões */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-success {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .navbar-light {
+            background-color: #fff !important;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* Container para os gráficos para melhor ajuste de altura */
+        .chart-container {
+            position: relative;
+            height: 300px; /* Define uma altura fixa para o container do gráfico */
+            width: 100%;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            #wrapper {
+                flex-direction: column;
+            }
+
+            #sidebar-wrapper {
+                margin-left: -15rem; /* Esconde a sidebar por padrão em telas pequenas */
+                width: 100%;
+                min-height: auto;
+                position: relative; /* Volta a ser relativa para rolar com o conteúdo */
+                box-shadow: none;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0; /* Mostra a sidebar quando toggled */
+            }
+
+            #page-content-wrapper {
+                width: 100vw; /* Ocupa a largura total */
+                margin-left: 0; /* Conteúdo sempre alinhado */
+                padding-left: 1rem; /* Padding menor para mobile */
+                padding-right: 1rem; /* Padding menor para mobile */
+            }
+
+            /* Quando o menu está visível em mobile, empurra o conteúdo para baixo */
+            #wrapper.toggled #page-content-wrapper {
+                padding-top: 15rem; /* Dá espaço para a sidebar que aparece acima */
+            }
+        }
+    </style>
 </head>
-<body id="dashboard-page" class="sidebar-collapsed">
+<body id="dashboard-page">
 <div class="d-flex" id="wrapper">
     <div class="bg-sidebar border-right" id="sidebar-wrapper">
         <div class="sidebar-heading text-center py-4">
             <img src="src/assets/icons/soueco.jpg" alt="logo souEco" class="img-fluid logo-dashboard">
         </div>
         <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3 current-page" data-section="overview"><i class="fas fa-chart-line"></i> <span>Visão Geral</span></a>
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="users"><i class="fas fa-users"></i> <span>Usuários</span></a>
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="materials"><i class="fas fa-recycle"></i> <span>Materiais Reciclados</span></a>
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="rewards"><i class="fas fa-gift"></i> <span>Recompensas</span></a>
-            <a href="#" class="list-group-item list-group-item-action bg-sidebar text-white p-3" data-section="settings"><i class="fas fa-cog"></i> <span>Configurações</span></a>
-            <a href="index.html" class="list-group-item list-group-item-action bg-sidebar text-white p-3 mt-auto"><i class="fas fa-home"></i> <span>Voltar ao Site</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3 current-page" data-section="overview"><i class="fas fa-chart-line"></i> <span>Visão Geral</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3" data-section="users"><i class="fas fa-users"></i> <span>Usuários</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3" data-section="materials"><i class="fas fa-recycle"></i> <span>Materiais Reciclados</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3" data-section="rewards"><i class="fas fa-gift"></i> <span>Recompensas</span></a>
+            <a href="#" class="list-group-item list-group-item-action p-3" data-section="settings"><i class="fas fa-cog"></i> <span>Configurações</span></a>
+            <a href="index.html" class="list-group-item list-group-item-action p-3 mt-auto" id="backToSiteLink"><i class="fas fa-home"></i> <span>Voltar ao Site</span></a>
         </div>
     </div>
     <div id="page-content-wrapper">
@@ -76,7 +329,7 @@
                         <div class="card shadow-sm h-100 bg-sessions">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="icon-circle text-dark me-3"><i class="fas fa-lightbulb"></i></div> <div>
+                                    <div class="icon-circle text-white me-3"><i class="fas fa-lightbulb"></i></div> <div>
                                     <h5 class="card-title text-muted mb-0">Sessões de Reciclagem</h5>
                                     <p class="card-text fs-3 fw-bold" id="totalSessions">5.678</p>
                                 </div>
@@ -89,14 +342,18 @@
                 <div class="row g-4 mb-4">
                     <div class="col-lg-6">
                         <div class="card shadow-sm h-100 p-3">
-                            <h5 class="card-title">Pontos por Material (Ecopontos/Kg)</h5>
-                            <canvas id="pointsPerMaterialChart"></canvas>
+                            <h5 class="card-title">Distribuição de Materiais Reciclados (Kg)</h5>
+                            <div class="chart-container">
+                                <canvas id="materialDistributionChart"></canvas>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="card shadow-sm h-100 p-3">
-                            <h5 class="card-title">Reciclagem por Material (Kg)</h5>
-                            <canvas id="materialRecyclingChart"></canvas>
+                            <h5 class="card-title">Evolução Mensal da Reciclagem (Kg)</h5>
+                            <div class="chart-container">
+                                <canvas id="monthlyRecyclingChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -105,7 +362,9 @@
                     <div class="col-lg-6">
                         <div class="card shadow-sm h-100 p-3">
                             <h5 class="card-title">Reciclagem Diária (Últimos 7 dias)</h5>
-                            <canvas id="dailyRecyclingChart"></canvas>
+                            <div class="chart-container">
+                                <canvas id="dailyRecyclingChart"></canvas>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -123,6 +382,16 @@
                                     </tr>
                                     </thead>
                                     <tbody id="topRecyclersTableBody">
+                                        <tr><td>1</td><td>Maria Clara</td><td>3500</td><td>350</td><td>Cobre</td></tr>
+                                        <tr><td>2</td><td>João Pedro</td><td>3200</td><td>320</td><td>Alumínio</td></tr>
+                                        <tr><td>3</td><td>Laura Santos</td><td>2800</td><td>280</td><td>Ferro (Sucata Comum)</td></tr>
+                                        <tr><td>4</td><td>Pedro Henrique</td><td>2500</td><td>250</td><td>PET</td></tr>
+                                        <tr><td>5</td><td>Isabela Guedes</td><td>2000</td><td>200</td><td>Papelão</td></tr>
+                                        <tr><td>6</td><td>Carlos Eduardo</td><td>1800</td><td>180</td><td>Lixo Eletrônico</td></tr>
+                                        <tr><td>7</td><td>Sofia Rodrigues</td><td>1500</td><td>150</td><td>Vidro</td></tr>
+                                        <tr><td>8</td><td>Gabriel Lima</td><td>1200</td><td>120</td><td>Placas de Circuito</td></tr>
+                                        <tr><td>9</td><td>Fernanda Souza</td><td>1000</td><td>100</td><td>Jornal</td></tr>
+                                        <tr><td>10</td><td>Lucas Mendes</td><td>900</td><td>90</td><td>PEAD</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -133,7 +402,7 @@
 
             <div id="users-section" class="dashboard-section">
                 <h2 class="mb-4">Gerenciamento de Usuários</h2>
-                <p>Detalhes e gestão dos usuários cadastrados no sistema.</p>
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-user-plus me-2"></i>Adicionar Novo Usuário</button>
                 <div class="card shadow-sm p-3">
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -143,7 +412,10 @@
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>Ecopontos</th>
+                                <th>Kg Reciclados</th>
                                 <th>Data de Cadastro</th>
+                                <th>Última Atividade</th>
+                                <th>Status</th>
                                 <th>Ações</th>
                             </tr>
                             </thead>
@@ -153,7 +425,10 @@
                                 <td>Ana Silva</td>
                                 <td>ana.s@email.com</td>
                                 <td>1500</td>
-                                <td>2024-01-10</td>
+                                <td>150</td>
+                                <td>01/01/2024</td>
+                                <td>28/07/2025</td>
+                                <td>Ativo</td>
                                 <td>
                                     <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
                                     <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
@@ -165,7 +440,40 @@
                                 <td>Bruno Costa</td>
                                 <td>bruno.c@email.com</td>
                                 <td>1200</td>
-                                <td>2024-02-15</td>
+                                <td>120</td>
+                                <td>15/01/2024</td>
+                                <td>30/07/2025</td>
+                                <td>Ativo</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Carla Diniz</td>
+                                <td>carla.d@email.com</td>
+                                <td>800</td>
+                                <td>80</td>
+                                <td>01/02/2024</td>
+                                <td>20/07/2025</td>
+                                <td>Ativo</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Daniel Santos</td>
+                                <td>daniel.s@email.com</td>
+                                <td>300</td>
+                                <td>30</td>
+                                <td>10/03/2024</td>
+                                <td>05/07/2025</td>
+                                <td>Inativo</td>
                                 <td>
                                     <button class="btn btn-sm btn-info me-1"><i class="fas fa-eye"></i></button>
                                     <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
@@ -179,44 +487,29 @@
             </div>
 
             <div id="materials-section" class="dashboard-section">
-                <h2 class="mb-4">Materiais Reciclados</h2>
-                <p>Informações detalhadas sobre os tipos e quantidades de materiais reciclados.</p>
+                <h2 class="mb-4">Detalhes dos Materiais Reciclados</h2>
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addMaterialTypeModal"><i class="fas fa-plus-circle me-2"></i>Adicionar Tipo de Material</button>
                 <div class="card shadow-sm p-3">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Material</th>
-                                <th>Total Kg</th>
+                                <th>Tipo Principal</th>
+                                <th>Material Específico</th>
+                                <th>Total Kg Reciclado</th>
                                 <th>Ecopontos/Kg</th>
-                                <th>Total Ecopontos</th>
+                                <th>Total Ecopontos Gerados</th>
+                                <th>Ações</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>Garrafa de Vidro</td>
-                                <td>5000</td>
-                                <td>10</td>
-                                <td>50000</td>
-                            </tr>
-                            <tr>
-                                <td>Plástico PET</td>
-                                <td>4000</td>
-                                <td>5</td>
-                                <td>20000</td>
-                            </tr>
-                            <tr>
-                                <td>Papelão</td>
-                                <td>2000</td>
-                                <td>3</td>
-                                <td>6000</td>
-                            </tr>
-                            <tr>
-                                <td>Alumínio</td>
-                                <td>1000</td>
-                                <td>15</td>
-                                <td>15000</td>
-                            </tr>
+                            <tbody id="materialDetailsTableBody">
+                                <tr><td>Metais</td><td>Alumínio (Latas)</td><td>3500</td><td>12</td><td>42000</td><td><button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>Metais</td><td>Ferro (Sucata Comum)</td><td>6000</td><td>5</td><td>30000</td><td><button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>Metais</td><td>Cobre</td><td>800</td><td>18</td><td>14400</td><td><button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>Plásticos</td><td>PET (Garrafas)</td><td>4500</td><td>6</td><td>27000</td><td><button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>Papéis</td><td>Papelão</td><td>7000</td><td>4</td><td>28000</td><td><button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>Eletrônicos</td><td>Celulares e Acessórios</td><td>120</td><td>25</td><td>3000</td><td><button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>
+                                <tr><td>Orgânicos</td><td>Restos de Alimentos</td><td>2500</td><td>1</td><td>2500</td><td><button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -225,13 +518,13 @@
 
             <div id="rewards-section" class="dashboard-section">
                 <h2 class="mb-4">Gerenciamento de Recompensas</h2>
-                <p>Crie, edite e gerencie as recompensas disponíveis para os usuários.</p>
-                <button class="btn btn-success mb-3"><i class="fas fa-plus-circle me-2"></i>Adicionar Nova Recompensa</button>
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addRewardModal"><i class="fas fa-plus-circle me-2"></i>Adicionar Nova Recompensa</button>
                 <div class="card shadow-sm p-3">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Recompensa</th>
                                 <th>Custo (Ecopontos)</th>
                                 <th>Parceiro</th>
@@ -241,7 +534,8 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td>Desconto Mercado X</td>
+                                <td>1</td>
+                                <td>Desconto Mercado X (10%)</td>
                                 <td>200</td>
                                 <td>Supermercado Bom Preço</td>
                                 <td>Ativo</td>
@@ -251,9 +545,21 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td>2</td>
                                 <td>Recarga Celular R$10</td>
                                 <td>100</td>
                                 <td>Operadora Claro</td>
+                                <td>Ativo</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Voucher Loja de Roupas Y (R$30)</td>
+                                <td>500</td>
+                                <td>Loja Elegance</td>
                                 <td>Ativo</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></button>
@@ -268,16 +574,11 @@
 
             <div id="settings-section" class="dashboard-section">
                 <h2 class="mb-4">Configurações do Sistema</h2>
-                <p>Ajustes gerais do sistema, como valores de ecopontos e integração.</p>
+                <p>Ajuste os valores de ecopontos e outras configurações globais.</p>
                 <form>
-                    <div class="mb-3">
-                        <label for="ecopointsGlass" class="form-label">Ecopontos por Garrafa de Vidro:</label>
-                        <input type="number" class="form-control" id="ecopointsGlass" value="10">
-                    </div>
-                    <div class="mb-3">
-                        <label for="ecopointsPlastic" class="form-label">Ecopontos por Plástico:</label>
-                        <input type="number" class="form-control" id="ecopointsPlastic" value="5">
-                    </div>
+                    <h4 class="mb-3">Valores de Ecopontos por Kg (Material Específico)</h4>
+                    <div id="ecopointsSettings" class="row mb-3">
+                        </div>
                     <div class="mb-3">
                         <label for="adminEmail" class="form-label">Email de Notificação do Admin:</label>
                         <input type="email" class="form-control" id="adminEmail" value="admin@soueco.com.br">
@@ -289,7 +590,330 @@
     </div>
 </div>
 
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Adicionar Novo Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Nome do Usuário</label>
+                        <input type="text" class="form-control" id="userName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userEmail" class="form-label">Email do Usuário</label>
+                        <input type="email" class="form-control" id="userEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userEcopoints" class="form-label">Ecopontos Iniciais</label>
+                        <input type="number" class="form-control" id="userEcopoints" value="0">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar Usuário</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addMaterialTypeModal" tabindex="-1" aria-labelledby="addMaterialTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMaterialTypeModalLabel">Adicionar Novo Tipo de Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="newMaterialType" class="form-label">Tipo Principal</label>
+                        <select class="form-select" id="newMaterialType" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="metais">Metais</option>
+                            <option value="plasticos">Plásticos</option>
+                            <option value="papeis">Papéis</option>
+                            <option value="vidros">Vidros</option>
+                            <option value="eletronicos">Lixo Eletrônico</option>
+                            <option value="organicos">Orgânicos</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newSpecificMaterial" class="form-label">Material Específico</label>
+                        <input type="text" class="form-control" id="newSpecificMaterial" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newEcopointsPerKg" class="form-label">Ecopontos por Kg</label>
+                        <input type="number" class="form-control" id="newEcopointsPerKg" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar Material</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addRewardModal" tabindex="-1" aria-labelledby="addRewardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRewardModalLabel">Adicionar Nova Recompensa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="rewardName" class="form-label">Nome da Recompensa</label>
+                        <input type="text" class="form-control" id="rewardName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rewardCost" class="form-label">Custo (Ecopontos)</label>
+                        <input type="number" class="form-control" id="rewardCost" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rewardPartner" class="form-label">Parceiro</label>
+                        <input type="text" class="form-control" id="rewardPartner">
+                    </div>
+                    <div class="mb-3">
+                        <label for="rewardStatus" class="form-label">Status</label>
+                        <select class="form-select" id="rewardStatus">
+                            <option value="Ativo">Ativo</option>
+                            <option value="Inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar Recompensa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="src/script.js"></script>
+<script>
+    // Código JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('menu-toggle');
+        const wrapper = document.getElementById('wrapper');
+        const dashboardSections = document.querySelectorAll('.dashboard-section');
+        const sidebarLinks = document.querySelectorAll('.list-group-item-action');
+        const backToSiteLink = document.getElementById('backToSiteLink'); // Adicionado para o link "Voltar ao Site"
+
+        // --- 1. Botão para Recolher/Expandir e Lógica do Menu ---
+        // Inicializa o menu expandido ou recolhido dependendo do tamanho da tela
+        function setInitialSidebarState() {
+            if (window.innerWidth > 768) {
+                 wrapper.classList.remove('toggled'); // Começa expandido em desktop
+            } else {
+                 wrapper.classList.add('toggled'); // Começa recolhido em mobile
+            }
+        }
+        setInitialSidebarState(); // Chama na carga da página
+
+        // Adiciona um listener para redimensionamento da janela
+        window.addEventListener('resize', setInitialSidebarState);
+
+
+        if (sidebarToggle && wrapper) {
+            sidebarToggle.addEventListener('click', function() {
+                wrapper.classList.toggle('toggled');
+            });
+        }
+
+        sidebarLinks.forEach(link => {
+            // Adicionado: Verifique se o link NÃO é o botão "Voltar ao Site"
+            if (link !== backToSiteLink) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); // Só impede o comportamento padrão para links internos do dashboard
+                    const targetSection = this.dataset.section;
+
+                    dashboardSections.forEach(section => section.classList.remove('active'));
+                    sidebarLinks.forEach(item => item.classList.remove('current-page'));
+
+                    const sectionToShow = document.getElementById(`${targetSection}-section`);
+                    if (sectionToShow) {
+                        sectionToShow.classList.add('active');
+                    }
+                    this.classList.add('current-page');
+
+                    // Em telas menores (mobile), o menu se recolhe ao clicar em um item.
+                    if (window.innerWidth <= 768 && wrapper.classList.contains('toggled')) {
+                        wrapper.classList.remove('toggled');
+                    }
+                });
+            }
+            // O link "Voltar ao Site" terá seu comportamento padrão (navegar para index.html)
+        });
+
+        // --- Dados para Gráficos e Tabelas (Visão do Gestor) ---
+        const gestorMaterialsData = {
+            'Alumínio (Latas)': { kg: 3500, ecopointsPerKg: 12 },
+            'Ferro (Sucata Comum)': { kg: 6000, ecopointsPerKg: 5 },
+            'Cobre': { kg: 800, ecopointsPerKg: 18 },
+            'PET (Garrafas)': { kg: 4500, ecopointsPerKg: 6 },
+            'Papelão': { kg: 7000, ecopointsPerKg: 4 },
+            'Celulares e Acessórios': { kg: 120, ecopointsPerKg: 25 },
+            'Restos de Alimentos': { kg: 2500, ecopointsPerKg: 1 },
+            'Vidro (Garrafas)': { kg: 2000, ecopointsPerKg: 2 }
+        };
+
+        const gestorMonthlyData = {
+            'Jan': 2000, 'Fev': 2500, 'Mar': 3000, 'Abr': 2800, 'Mai': 3500, 'Jun': 4000,
+            'Jul': 3800, 'Ago': 4200, 'Set': 4500, 'Out': 4300, 'Nov': 4800, 'Dez': 5000
+        };
+
+        const gestorDailyData = {
+            'Dom': 500, 'Seg': 800, 'Ter': 1200, 'Qua': 1000, 'Qui': 1500, 'Sex': 900, 'Sáb': 700
+        };
+
+        const materialChartColors = [
+            '#FFD700', '#A9A9A9', '#CD7F32', '#00BFFF', '#8B4513', '#6A5ACD', '#556B2F', '#4682B4'
+        ];
+
+        // --- Cards de Resumo ---
+        function updateSummaryCards() {
+            let totalKg = 0;
+            let totalEcopoints = 0;
+            for (const material in gestorMaterialsData) {
+                totalKg += gestorMaterialsData[material].kg;
+                totalEcopoints += gestorMaterialsData[material].kg * gestorMaterialsData[material].ecopointsPerKg;
+            }
+            document.getElementById('totalUsers').textContent = '2.540';
+            document.getElementById('totalRecycledWeight').textContent = totalKg.toLocaleString('pt-BR');
+            document.getElementById('totalEcopoints').textContent = totalEcopoints.toLocaleString('pt-BR');
+            document.getElementById('totalSessions').textContent = '5.678';
+        }
+
+        // --- Gráficos (Adaptados para Gestão e Redimensionados) ---
+
+        // Gráfico de Distribuição de Materiais Reciclados (Pie/Doughnut)
+        const materialDistributionCtx = document.getElementById('materialDistributionChart').getContext('2d');
+        const materialDistributionChart = new Chart(materialDistributionCtx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(gestorMaterialsData),
+                datasets: [{
+                    data: Object.values(gestorMaterialsData).map(m => m.kg),
+                    backgroundColor: materialChartColors.slice(0, Object.keys(gestorMaterialsData).length),
+                    borderColor: '#fff',
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Permite que a altura máxima seja respeitada
+                plugins: {
+                    legend: { position: 'right' },
+                    title: {
+                        display: true,
+                        text: 'Distribuição de Materiais Reciclados (Kg)',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) label += ': ';
+                                if (context.parsed !== null) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    label += context.parsed.toFixed(1) + ' Kg (' + percentage + '%)';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Evolução Mensal da Reciclagem (Bar)
+        const monthlyRecyclingCtx = document.getElementById('monthlyRecyclingChart').getContext('2d');
+        const monthlyRecyclingChart = new Chart(monthlyRecyclingCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(gestorMonthlyData),
+                datasets: [{
+                    label: 'Kg Reciclados',
+                    data: Object.values(gestorMonthlyData),
+                    backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Quantidade (Kg)' } },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Evolução Mensal da Reciclagem (Kg)',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Reciclagem Diária (Line Chart)
+        const dailyRecyclingCtx = document.getElementById('dailyRecyclingChart').getContext('2d');
+        const dailyRecyclingChart = new Chart(dailyRecyclingCtx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(gestorDailyData),
+                datasets: [{
+                    label: 'Kg Reciclados',
+                    data: Object.values(gestorDailyData),
+                    backgroundColor: 'rgba(0, 123, 255, 0.4)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Quantidade (Kg)' } },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Reciclagem Diária (Últimos 7 dias)',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                }
+            }
+        });
+
+        // --- Seção de Configurações (Ecopontos por Material Específico) ---
+        const ecopointsSettingsDiv = document.getElementById('ecopointsSettings');
+        if (ecopointsSettingsDiv) {
+            for (const material in gestorMaterialsData) {
+                const currentEcopoints = gestorMaterialsData[material].ecopointsPerKg;
+
+                const colDiv = document.createElement('div');
+                colDiv.className = 'col-md-6 mb-3';
+                colDiv.innerHTML = `
+                    <label for="ecopoints-${material.replace(/[\s\(\)\/]/g, '')}" class="form-label">Ecopontos por Kg (${material}):</label>
+                    <input type="number" class="form-control" id="ecopoints-${material.replace(/[\s\(\)\/]/g, '')}" value="${currentEcopoints}" step="0.01">
+                `;
+                ecopointsSettingsDiv.appendChild(colDiv);
+            }
+        }
+
+        // Chamada inicial para preencher os cards e atualizar gráficos
+        updateSummaryCards();
+    });
+</script>
 </body>
 </html>
